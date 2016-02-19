@@ -1,0 +1,32 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<dom-module id="paper-input-vector">
+  <template>
+    <style>
+    </style>
+    <content>
+		<paper-input label="X"></paper-input>
+		<paper-input label="Y"></paper-input>
+		<paper-input label="Z"></paper-input>
+	</content>
+  </template>
+</dom-module>
+
+<script>
+  Polymer ( {
+    is: 'paper-input-vector',
+	
+    behaviors: [
+    ],
+
+    properties: {
+      inline: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: true
+      }
+    }
+  });
+</script>
