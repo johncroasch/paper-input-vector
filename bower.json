@@ -1,0 +1,30 @@
+{
+  "name": "paper-input-vector",
+  "version": "0.0.2",
+  "description": "A material design vector input",
+  "authors": [
+    "John C. Roasch"
+  ],
+  "keywords": [
+    "web-components",
+    "polymer",
+    "paper",
+    "input",
+    "vector",
+    "control"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/johncroasch/paper-input-vector"
+  },
+  "homepage": "https://github.com/johncroasch/paper-input-vector",
+  "ignore": [],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "paper-input": "PolymerElements/paper-input#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "iron-validator-behavior": "PolymerElements/iron-validator-behavior#^1.0.0",
+  },
+  "main": "paper-input-vector.html"
+}
