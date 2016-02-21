@@ -13,7 +13,7 @@
     "vector",
     "control"
   ],
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/johncroasch/paper-input-vector"
