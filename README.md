@@ -29,6 +29,8 @@ This is typically needed for 3D applications where position, direction, or color
                     label-comp4="A"></paper-input-vector>
 ```
 
+[[img/examples.png]]
+
 ##properties
 | property | type | default value | description |
 | --- | --- | --- | --- |
