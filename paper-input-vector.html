@@ -54,7 +54,7 @@ Polymer ( {
 	validate: function ( value ) {
 		var num = Number(value);
 		if ( isNaN ( num ) )
-			return {invalid:true,message:'value is not a number'};
+			return {invalid:true,message:'not a number'};
 		if ( this.type == 'Float' ) {
 			if ( this.minValue != undefined && num < this.minValue ) return {invalid:true,message:'value < '+this.minValue};
 			if ( this.maxValue != undefined && num > this.maxValue ) return {invalid:true,message:'value > '+this.maxValue};
@@ -114,10 +114,10 @@ Polymer ( {
 		label: {type:String, value:'vector input' },
 		dimension: {type:Number, value:3 },
 		units: {type:String, value:'' },
-		errorMessage1: {type:String, value:'invalid entry' },
-		errorMessage2: {type:String, value:'invalid entry' },
-		errorMessage3: {type:String, value:'invalid entry' },
-		errorMessage4: {type:String, value:'invalid entry' },
+		errorMessage1: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage2: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage3: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage4: {type:String, value:'invalid entry', reflectToAttribute:false },
 		type: {type:String, value:'Float' }, /* allowed values: Integer, Float */
 		labelComp1: {type:String, value:'component 1'},
 		labelComp2: {type:String, value:'component 2'},
