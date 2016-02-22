@@ -28,8 +28,9 @@ This is typically needed for 3D applications where position, direction, or color
                     label-comp3="B"
                     label-comp4="A"></paper-input-vector>
 ```
+will produce the following input vectors:
 
-[[https://github.com/johncroasch/paper-input-vector/tree/master/img/exmples.png]]
+![examples](img/examples.png?raw=true)
 
 ##properties
 | property | type | default value | description |
