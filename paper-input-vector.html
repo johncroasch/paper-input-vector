@@ -2,7 +2,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-styles/typography.html">
-<link rel="import" href="../iron-validator-behavior/iron-validator-behavior.html">
 
 <dom-module id="paper-input-vector">
   <template>
@@ -14,35 +13,57 @@
 		--paper-input-container-invalid-color: var(--google-red-500);
     }
 	</style>
+	
 	<!-- no content allowed -->
     <content select=".content"></content>
+	
 	<div>
 		{{label}}
-		<table><tr id="table_row">
-			<td><paper-input error-message="{{errorMessage}}" id="input1" label="{{labelComp1}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
+		<table style="width:100%"><tr id="table_row">
+			<td><paper-input value="{{valueComp1}}" error-message="{{errorMessage1}}" id="input1" label="{{labelComp1}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
 			<td>&nbsp;&nbsp;&nbsp;</td>
-			<td><paper-input error-message="{{errorMessage}}" id="input2" label="{{labelComp2}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
+			<td><paper-input value="{{valueComp2}}" error-message="{{errorMessage2}}" id="input2" label="{{labelComp2}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
 			<td id="table_cell3_space">&nbsp;&nbsp;&nbsp;</td>
-			<td id="table_cell3"><paper-input error-message="{{errorMessage}}" id="input3" label="{{labelComp3}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
+			<td id="table_cell3"><paper-input value="{{valueComp3}}" error-message="{{errorMessage3}}" id="input3" label="{{labelComp3}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
 			<td id="table_cell4_space">&nbsp;&nbsp;&nbsp;</td>
-			<td id="table_cell4"><paper-input error-message="{{errorMessage}}" id="input4" label="{{labelComp4}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
+			<td id="table_cell4"><paper-input value="{{valueComp4}}" error-message="{{errorMessage4}}" id="input4" label="{{labelComp4}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
 		</tr></table>
 	</div>
+	
   </template>
 </dom-module>
 
 <script>
+
 Polymer ( {
     is: 'paper-input-vector',
-	setValue: function ( vector ) {
-		for ( var i=0 ; i<vector.length ; i++ ) {
-			this.vector[i] = vector[i];
+	// set values with an array
+	setVector: function ( vector ) {
+		for ( var i=1 ; i<=this.dimension ; i++ ) {
+			this['valueComp'+i] = vector[i-1];
 		}
 	},
+	// get values as an array
+	getVector: function () {
+		var vector = [];
+		for ( var i=1 ; i<=this.dimension ; i++ ) {
+			vector[i-1] = this['valueComp'+i];
+		}
+		return vector;
+	},
+	validate: function ( value ) {
+		var num = Number(value);
+		if ( isNaN ( num ) )
+			return {invalid:true,message:'not a number'};
+		if ( this.type == 'Float' ) {
+			if ( this.minValue != undefined && num < this.minValue ) return {invalid:true,message:'value < '+this.minValue};
+			if ( this.maxValue != undefined && num > this.maxValue ) return {invalid:true,message:'value > '+this.maxValue};
+		}
+		return {invalid:false,message:''};
+	},
 	ready: function() {
-		var row = this.$.table_row;
-		
 		// remove unnecessary elements
+		var row = this.$.table_row;
 		if ( this.dimension < 4 ) {
 			Polymer.dom(row).removeChild(this.$.table_cell4);
 			Polymer.dom(row).removeChild(this.$.table_cell4_space);
@@ -57,37 +78,55 @@ Polymer ( {
 		{
 			var input = this.$['input'+d];
 			input.preventInvalidInput = true;
+			
 			if ( this.type == 'Integer' )
 				input.allowedPattern = '[0-9+-]';
 			else if ( this.type == 'Float' )
 				input.allowedPattern = '[.0-9e+-]';
-			
-			input.autoValidate = true;
-			input.validator = "number-validator";
 		}
 	},
-    behaviors: [
-        Polymer.IronValidatorBehavior
-    ],
-	validatorName:"number-validator",
-	validate: function ( values ) {
-		if ( this.type == 'Float' ) {
-			if ( !isNaN(Number(values) ) ) return true;
-		}
-		return false;
+	_comp1Observer: function ( newVal , oldVal ) {
+		var input = this.$.input1;
+		var result = this.validate ( newVal );
+		input.invalid = result.invalid;
+		this.errorMessage1 = result.message;
+	},
+	_comp2Observer: function ( newVal , oldVal ) {
+		var input = this.$.input2;
+		var result = this.validate ( newVal );
+		input.invalid = result.invalid;
+		this.errorMessage2 = result.message;
+	},
+	_comp3Observer: function ( newVal , oldVal ) {
+		var input = this.$.input3;
+		var result = this.validate ( newVal );
+		input.invalid = result.invalid;
+		this.errorMessage3 = result.message;
+	},
+	_comp4Observer: function ( newVal , oldVal ) {
+		var result = this.validate ( newVal );
+		input.invalid = result.invalid;
+		this.errorMessage4 = result.message;
 	},
     properties: {
-		vector: {type:Array, value:[0,0,0,0]},
-		normalized: {type:Boolean , value:false},
+		minValue: {type:Number , value:undefined},
+		maxValue: {type:Number , value:undefined},
 		label: {type:String, value:'vector input' },
 		dimension: {type:Number, value:3 },
 		units: {type:String, value:'' },
-		errorMessage: {type:String, value:'Invalid Input' },
+		errorMessage1: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage2: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage3: {type:String, value:'invalid entry', reflectToAttribute:false },
+		errorMessage4: {type:String, value:'invalid entry', reflectToAttribute:false },
 		type: {type:String, value:'Float' }, /* allowed values: Integer, Float */
-		labelComp1: {type:String, value:'component 1' },
-		labelComp2: {type:String, value:'component 2' },
-		labelComp3: {type:String, value:'component 3' },
-		labelComp4: {type:String, value:'component 4' }
+		labelComp1: {type:String, value:'component 1'},
+		labelComp2: {type:String, value:'component 2'},
+		labelComp3: {type:String, value:'component 3'},
+		labelComp4: {type:String, value:'component 4'},
+		valueComp1: {type:Number, value:0 , observer: '_comp1Observer'},
+		valueComp2: {type:Number, value:0 , observer: '_comp2Observer'},
+		valueComp3: {type:Number, value:0 , observer: '_comp3Observer'},
+		valueComp4: {type:Number, value:0 , observer: '_comp4Observer'}
 	}
   });
 </script>
