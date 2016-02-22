@@ -5,6 +5,30 @@ The objective is to provide a macro widget enabling user to specify a vector (di
 
 This is typically needed for 3D applications where position, direction, or color inputs are needed.
 
+##examples
+```
+<paper-input-vector units="%"
+                    label="Scale"
+                    label-comp1="X"
+                    label-comp2="Y"
+                    label-comp3="Z"></paper-input-vector>
+
+<paper-input-vector units="m"
+                    label="Position"
+                    label-comp1="X"
+                    label-comp2="Y"
+                    label-comp3="Z"></paper-input-vector>
+
+<paper-input-vector min-value=0
+                    max-value=1
+                    dimension=4
+                    label="Diffuse"
+                    label-comp1="R"
+                    label-comp2="G"
+                    label-comp3="B"
+                    label-comp4="A"></paper-input-vector>
+```
+
 ##properties
 | property | type | default value | description |
 | --- | --- | --- | --- |
