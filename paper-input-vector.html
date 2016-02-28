@@ -1,42 +1,72 @@
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../paper-styles/typography.html">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <dom-module id="paper-input-vector">
   <template>
     <style>
-	div {
-	  @apply(--paper-font-common-base);
-	}
-	paper-input {
-		--paper-input-container-invalid-color: var(--google-red-500);
-    }
-	</style>
-	
-	<!-- no content allowed -->
+      #reset {
+        color: rgba(164, 164, 255, 1);
+        vertical-align:middle;
+        cursor: pointer;
+      }
+      #title {
+        text-overflow:ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        vertical-align:middle;
+      }
+      div {
+        @apply(--paper-font-common-base);
+      }
+      div.inline1 {
+        display:table-cell;
+        width:100%;
+        padding:2px;
+      }
+      div.inline2 {
+        display:table-cell;
+        width:50%;
+        padding:2px;
+      }
+      div.inline3 {
+        display:table-cell;
+        width:33%;
+        padding:2px;
+      }
+      div.inline4 {
+        display:table-cell;
+        width:25%;
+        padding:2px;
+      }
+      paper-input {
+        --paper-input-container-invalid-color: var(--google-red-500);
+      }
+    </style>
+    <!-- no content allowed -->
     <content select=".content"></content>
-	
-	<div>
-		{{label}}
-		<table style="width:100%"><tr id="table_row">
-			<td><paper-input value="{{valueComp1}}" error-message="{{errorMessage1}}" id="input1" label="{{labelComp1}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
-			<td>&nbsp;&nbsp;&nbsp;</td>
-			<td><paper-input value="{{valueComp2}}" error-message="{{errorMessage2}}" id="input2" label="{{labelComp2}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
-			<td id="table_cell3_space">&nbsp;&nbsp;&nbsp;</td>
-			<td id="table_cell3"><paper-input value="{{valueComp3}}" error-message="{{errorMessage3}}" id="input3" label="{{labelComp3}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
-			<td id="table_cell4_space">&nbsp;&nbsp;&nbsp;</td>
-			<td id="table_cell4"><paper-input value="{{valueComp4}}" error-message="{{errorMessage4}}" id="input4" label="{{labelComp4}}" always-float-label placeholder="enter..."><div suffix>{{units}}</div></paper-input></td>
-		</tr></table>
-	</div>
-	
+    <div style="width:100%">
+      <table style="table-layout:fixed; width:100%"><tr><td id="reset" style="width:20px"><i class="material-icons md-18">refresh</i></td><td style="width:5px"></td><td><div id="title">{{label}}</div></td></tr></table>
+      <div id="container" style="display:table; width:100%;">
+        <div id="cell1" class="inline4"><paper-input value="{{valueComp1}}" error-message="{{errorMessage1}}" id="input1" label="{{labelComp1}}" always-float-label placeholder="..."><div suffix>{{units}}</div></paper-input></div>
+        <div id="cell2" class="inline4"><paper-input value="{{valueComp2}}" error-message="{{errorMessage2}}" id="input2" label="{{labelComp2}}" always-float-label placeholder="..."><div suffix>{{units}}</div></paper-input></div>
+        <div id="cell3" class="inline4"><paper-input value="{{valueComp3}}" error-message="{{errorMessage3}}" id="input3" label="{{labelComp3}}" always-float-label placeholder="..."><div suffix>{{units}}</div></paper-input></div>
+        <div id="cell4" class="inline4"><paper-input value="{{valueComp4}}" error-message="{{errorMessage4}}" id="input4" label="{{labelComp4}}" always-float-label placeholder="..."><div suffix>{{units}}</div></paper-input></div>
+      </div>
+    </div>
+    <paper-tooltip for="reset" position="right">reset to default</paper-tooltip>
   </template>
 </dom-module>
 
 <script>
 
+var defaultValue = '';
+
 Polymer ( {
-    is: 'paper-input-vector',
+  is: 'paper-input-vector',
 	// set values with an array
 	setVector: function ( vector ) {
 		for ( var i=1 ; i<=this.dimension ; i++ ) {
@@ -51,28 +81,48 @@ Polymer ( {
 		}
 		return vector;
 	},
+  // custom validation 
 	validate: function ( value ) {
 		var num = Number(value);
-		if ( isNaN ( num ) )
-			return {invalid:true,message:'not a number'};
-		if ( this.type == 'Float' ) {
+		if ( isNaN ( num ) &&
+         ( value.length != 1 || ( value != '-' && value != '+' && value != '.' ) ) &&
+         ( value.length != 2 || ( value != '-.' && value != '+.' ) ) ) {
+      return {invalid:true,message:'not a number'};
+    }
+    if ( this.type == 'Float' ) {
 			if ( this.minValue != undefined && num < this.minValue ) return {invalid:true,message:'value < '+this.minValue};
 			if ( this.maxValue != undefined && num > this.maxValue ) return {invalid:true,message:'value > '+this.maxValue};
 		}
 		return {invalid:false,message:''};
 	},
 	ready: function() {
-		// remove unnecessary elements
-		var row = this.$.table_row;
-		if ( this.dimension < 4 ) {
-			Polymer.dom(row).removeChild(this.$.table_cell4);
-			Polymer.dom(row).removeChild(this.$.table_cell4_space);
+		// remove unnecessary elements and adjust class
+    var row = this.$.container;
+		if ( this.dimension == 3 ) {
+			Polymer.dom(row).removeChild(this.$.cell4);
+      this.toggleClass ( 'inline4' , false , this.$.cell3 );
+      this.toggleClass ( 'inline4' , false , this.$.cell2 );
+      this.toggleClass ( 'inline4' , false , this.$.cell1 );
+      this.toggleClass ( 'inline3' , true , this.$.cell3 );
+      this.toggleClass ( 'inline3' , true , this.$.cell2 );
+      this.toggleClass ( 'inline3' , true , this.$.cell1 );
 		}
-		if ( this.dimension < 3 ) {
-			Polymer.dom(row).removeChild(this.$.table_cell3);
-			Polymer.dom(row).removeChild(this.$.table_cell3_space);
+		else if ( this.dimension == 2 ) {
+			Polymer.dom(row).removeChild(this.$.cell4);
+			Polymer.dom(row).removeChild(this.$.cell3);
+      this.toggleClass ( 'inline4' , false , this.$.cell2 );
+      this.toggleClass ( 'inline4' , false , this.$.cell1 );
+      this.toggleClass ( 'inline2' , true , this.$.cell2 );
+      this.toggleClass ( 'inline2' , true , this.$.cell1 );
 		}
-		
+		else if ( this.dimension == 1 ) {
+			Polymer.dom(row).removeChild(this.$.cell4);
+			Polymer.dom(row).removeChild(this.$.cell3);
+			Polymer.dom(row).removeChild(this.$.cell2);
+      this.toggleClass ( 'inline4' , false , this.$.cell1 );
+      this.toggleClass ( 'inline1' , true , this.$.cell1 );
+		}
+    
 		// customize input behavior
 		for ( var d=1 ; d<=this.dimension ; d++ )
 		{
@@ -80,11 +130,12 @@ Polymer ( {
 			input.preventInvalidInput = true;
 			
 			if ( this.type == 'Integer' )
-				input.allowedPattern = '[0-9+-]';
+				input.allowedPattern = '[-+0-9]';
 			else if ( this.type == 'Float' )
-				input.allowedPattern = '[.0-9e+-]';
+				input.allowedPattern = '[-+0-9eE.]';
 		}
 	},
+  // yuk...
 	_comp1Observer: function ( newVal , oldVal ) {
 		var input = this.$.input1;
 		var result = this.validate ( newVal );
@@ -104,11 +155,21 @@ Polymer ( {
 		this.errorMessage3 = result.message;
 	},
 	_comp4Observer: function ( newVal , oldVal ) {
+		var input = this.$.input4;
 		var result = this.validate ( newVal );
 		input.invalid = result.invalid;
 		this.errorMessage4 = result.message;
 	},
-    properties: {
+  listeners: {
+    'reset.click': '_resetValues'
+  },
+  _resetValues: function ( e ) {
+    this.valueComp1 = defaultValue;
+    this.valueComp2 = defaultValue;
+    this.valueComp3 = defaultValue;
+    this.valueComp4 = defaultValue;
+  },
+  properties: {
 		minValue: {type:Number , value:undefined},
 		maxValue: {type:Number , value:undefined},
 		label: {type:String, value:'vector input' },
@@ -123,10 +184,10 @@ Polymer ( {
 		labelComp2: {type:String, value:'component 2'},
 		labelComp3: {type:String, value:'component 3'},
 		labelComp4: {type:String, value:'component 4'},
-		valueComp1: {type:Number, value:0 , observer: '_comp1Observer'},
-		valueComp2: {type:Number, value:0 , observer: '_comp2Observer'},
-		valueComp3: {type:Number, value:0 , observer: '_comp3Observer'},
-		valueComp4: {type:Number, value:0 , observer: '_comp4Observer'}
+		valueComp1: {type:Number, value:defaultValue , observer: '_comp1Observer'},
+		valueComp2: {type:Number, value:defaultValue , observer: '_comp2Observer'},
+		valueComp3: {type:Number, value:defaultValue , observer: '_comp3Observer'},
+		valueComp4: {type:Number, value:defaultValue , observer: '_comp4Observer'}
 	}
   });
 </script>
